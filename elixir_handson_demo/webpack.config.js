@@ -1,15 +1,16 @@
 'use strict'
 const webpack = require('webpack')
 const { resolve } = require('path')
+const ExtractTextPlugin = require('extract-text-webpack-plugin')
 
 module.exports = {
-  entry: {
-    'index.js': './index.js',
-    "index.css": "./index.scss"
-  },
+  entry: [
+    "./index.js",
+    "./index.scss"
+  ],
   output: {
     path: resolve(__dirname, "dist"),
-    filename: "[name]",
+    filename: "[name].js",
     publicPath: "http://localhost:8080/assets"
   },
   module: {
@@ -21,11 +22,12 @@ module.exports = {
       },
       {
         test: /.scss/,
-        use: [
-          {loader: "style-loader"},
-          {loader: "css-loader"},
-          {loader: "sass-loader"},
-        ]
+        use: ExtractTextPlugin.extract({
+          use: [
+            "css-loader",
+            "sass-loader"
+          ]
+        })
       },
       {
         test: /\.woff2?$|\.ttf$|\.eot$|\.svg$/,
@@ -35,5 +37,8 @@ module.exports = {
   },
   resolve: {
     extensions: [".js", ".jsx"],
-  }
+  },
+  plugins: [
+    new ExtractTextPlugin("index.css")
+  ]
 }
