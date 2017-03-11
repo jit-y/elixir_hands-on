@@ -11,7 +11,8 @@ defmodule Demo.Application do
     # Define workers and child supervisors to be supervised
     children = [
       # Starts a worker by calling: Demo.Worker.start_link(arg1, arg2, arg3)
-      worker(__MODULE__, [], function: :start_cowboy)
+      worker(__MODULE__, [], function: :start_cowboy),
+      supervisor(Phoenix.PubSub.PG2, [:chat_pubsub, []])
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
@@ -23,6 +24,7 @@ defmodule Demo.Application do
   def start_cowboy do
     routes = [
       {"/", Demo.HelloHandler, []},
+      {"/websocket", Demo.WebSocketHandler, []},
       {"/greet/:name", Demo.GreetHandler, []},
       {"/static/[...]", :cowboy_static, {:priv_dir, :demo, "static_files"}}
     ]
